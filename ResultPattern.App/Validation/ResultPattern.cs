@@ -1,0 +1,111 @@
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ResultPattern;
+
+[DebuggerDisplay("IsSuccess = {IsSuccess}, Possui {Errors.Count} Erros = {ToString()}")]
+public class Result
+{
+    protected Result(bool isSucess)
+    {
+        IsSuccess = isSucess;
+    }
+
+    public Result() { }
+
+    protected Result(bool isSuccess, Error error, string? language = null)
+    {
+        switch (isSuccess)
+        {
+            case true when error != Error.None:
+                throw new InvalidOperationException();
+
+            case false when error == Error.None:
+                throw new InvalidOperationException();
+
+            default:
+                IsSuccess = isSuccess;
+                if (!isSuccess) Errors.Add(error.GetMessage(language));
+                break;
+        }
+    }
+
+    public bool IsSuccess { get; protected set; }
+    public List<string> Errors { get; protected set; } = new List<string>();
+
+    public override string ToString()
+    {
+        return string.Join(", ", Errors);
+    }
+
+    public bool IsFailure => !IsSuccess;
+
+    public static Result Ok() => new(true, Error.None);
+    public static Result Fail(Error error) => new(false, error);
+
+
+    public static Result<T> Create<T>(T? value) =>
+        value is not null
+            ? Ok(value)
+            : Fail<T>(Error.NullValue);
+
+
+    public static Result<T> Ok<T>(T data)
+        => new(data, true, Error.None);
+
+    public static Result<T> Fail<T>(Error error)
+        => new(default, false, error);
+
+    public static Result<T> Fail<T>(Error error, T data)
+        => new(data, false, error);
+
+
+}
+
+public class Result<T> : Result where T : notnull
+{
+
+    public static implicit operator Result<T>(T? value) => Create(value);
+
+    private readonly T? _value;
+
+    [NotNull]
+    public T Value => _value! ?? throw new InvalidOperationException("Result has no value");
+
+    protected internal Result(T? value, bool isSuccess, Error error) : base(isSuccess, error)
+    {
+        _value = value;
+    }
+
+    //public Result()
+    //{
+    //}
+
+    public static Result<T> Validate(Func<T, bool> func, Error message, T data)
+    {
+        var resultTest = func(data);
+
+        if (resultTest)
+            return Fail(message, data);
+        else
+            return Ok(data);
+    }
+
+
+    public Result<T> AddMessageError(Error error)
+    {
+        if (IsSuccess)
+            IsSuccess = false;
+
+        var msg = error.GetMessage();
+
+        if (!Errors.Contains(msg))
+        {
+            Errors.Add(msg);
+        }
+
+        return this;
+    }
+}
+
+
