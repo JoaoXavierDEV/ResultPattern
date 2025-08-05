@@ -1,14 +1,37 @@
-﻿using ResultPattern;
+﻿using System.Globalization;
+using ResultPattern.Entity;
+using ResultPattern.Service;
 
 public static class Program
 {
     public static void Main(string[] args)
     {
-        var user = new Usuario();
+        var userService = new UsuarioService();
 
-        var result = user.RegisterUser("test@example.com", "");
+        var atual = CultureInfo.CurrentCulture;
 
-        var result2 = user.RegisterUser2("", "");
+        var user = new Usuario
+        {
+            Nome = "John Doe",
+            Email = ""
+        };
+
+        // Retorna um resultado com sucesso ou falha
+        var result = userService.RegisterUser(user);
+
+
+        CultureInfo.CurrentCulture = new CultureInfo("en-US");
+
+        atual = CultureInfo.CurrentCulture;
+
+        var user2 = new Usuario
+        {
+            Nome = "",
+            Email = ""
+        };
+
+        // Retorna um Result com uma lista de mensagens de erro
+        var result2 = userService.RegisterUser2(user2);
 
 
         if (result.IsSuccess)
