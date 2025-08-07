@@ -11,6 +11,7 @@ namespace ResultPattern.Service
         /// <returns></returns>
         public Result RegisterUser(Usuario user)
         {
+            // validação usando o record Error
             if (string.IsNullOrWhiteSpace(user.Email))
                 return Result.Fail(UsuarioValidade.InvalidEmail);
 
@@ -20,6 +21,7 @@ namespace ResultPattern.Service
             if (UserExists(user.Email))
                 return Result.Fail(UsuarioValidade.DuplicateEmail);
 
+            // validação personalizada
             var testeSenha = Result<Usuario>.Validate(
                 user => user.Senha.Length < 10,
                 "Senha menor que 10 caracteres",
@@ -29,7 +31,6 @@ namespace ResultPattern.Service
             if (!testeSenha.IsSuccess)
                 return testeSenha;
 
-            // Registration logic here
             CreateUser(user);
 
             return Result<Usuario>.Ok();
@@ -41,7 +42,6 @@ namespace ResultPattern.Service
         public Result RegisterUser2(Usuario user)
         {
             var validationResult = Result<Usuario>.Create(user);
-            var validationResult2 = Result.Create(user);
 
             if (string.IsNullOrWhiteSpace(user.Email))
                 validationResult.AddMessageError(UsuarioValidade.InvalidEmail);

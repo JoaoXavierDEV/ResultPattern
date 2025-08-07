@@ -60,8 +60,8 @@ public class Result
     public static Result<T> Ok<T>(T data)
         => new(data, true);
 
-    public static Result<T> Ok<T>()
-        => new(default, true);
+    public static Result Ok<T>()
+        => new(true);
 
     // TODO testar versoes <T> e default
     public static Result<T> Fail<T>(Error error)
