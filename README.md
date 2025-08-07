@@ -23,7 +23,7 @@ Utilize o **Result Pattern** quando desejar evitar o uso de exceções para vali
 
 ## Exemplo de uso
 
-#### Retona apenas 1 erro
+#### Retorna apenas 1 erro
 ```csharp
 public Result RegisterUser(Usuario user)
 {
@@ -52,7 +52,7 @@ public Result RegisterUser(Usuario user)
     return Result<Usuario>.Ok();
 }
 ```
-#### Retona uma lista de erro 
+#### Retorna uma lista de erro 
 ```csharp
 public Result RegisterUser2(Usuario user)
 {
