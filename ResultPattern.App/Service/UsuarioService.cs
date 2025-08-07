@@ -20,10 +20,19 @@ namespace ResultPattern.Service
             if (UserExists(user.Email))
                 return Result.Fail(UsuarioValidade.DuplicateEmail);
 
+            var testeSenha = Result<Usuario>.Validate(
+                user => user.Senha.Length < 10,
+                "Senha menor que 10 caracteres",
+                user
+            );
+
+            if (!testeSenha.IsSuccess)
+                return testeSenha;
+
             // Registration logic here
             CreateUser(user);
 
-            return Result.Ok();
+            return Result<Usuario>.Ok();
         }
         /// <summary>
         /// Registra o usuário com validação e retorno de mensagens de erro.

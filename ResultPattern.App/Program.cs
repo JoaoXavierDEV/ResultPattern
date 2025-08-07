@@ -13,7 +13,8 @@ public static class Program
         var user = new Usuario
         {
             Nome = "John Doe",
-            Email = ""
+            Email = "dssdsd",
+            Senha = "12345678"
         };
 
         // Retorna um resultado com sucesso ou falha
