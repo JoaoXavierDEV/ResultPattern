@@ -46,6 +46,8 @@ if (!testeSenha.IsSuccess)
 
 CreateUser(user);
 
+![enter image description here](jjjj)
+
 return Result<Usuario>.Ok();
 ```
 

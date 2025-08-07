@@ -19,11 +19,10 @@ public static class Program
 
         // Retorna um resultado com sucesso ou falha
         var result = userService.RegisterUser(user);
+        //atual = CultureInfo.CurrentCulture;
 
 
         CultureInfo.CurrentCulture = new CultureInfo("en-US");
-
-        atual = CultureInfo.CurrentCulture;
 
         var user2 = new Usuario
         {
@@ -35,13 +34,7 @@ public static class Program
         var result2 = userService.RegisterUser2(user2);
 
 
-        if (result.IsSuccess)
-        {
-            Console.WriteLine("User registered successfully.");
-        }
-        else
-        {
-            Console.WriteLine($"Registration failed: {result.ToString()}");
-        }
+
+
     }
 }

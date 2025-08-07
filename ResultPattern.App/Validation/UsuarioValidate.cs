@@ -2,10 +2,6 @@
 {
     public record UsuarioValidade : Error
     {
-        public UsuarioValidade(string code, Dictionary<string, string> messages) : base(code, messages)
-        {
-        }
-
         public static UsuarioValidade InvalidEmail = new("Error.InvalidEmail", new Dictionary<string, string>
         {
             { "pt-br", "O e-mail fornecido é inválido." },
@@ -24,5 +20,8 @@
             { "en-us", "An account with this email already exists." }
         });
 
+        public UsuarioValidade(string code, Dictionary<string, string> messages) : base(code, messages)
+        {
+        }
     }
 }
