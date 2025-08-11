@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using ResultPattern;
 using ResultPattern.Entity;
 using ResultPattern.Service;
 
@@ -32,6 +33,48 @@ public static class Program
 
         // Retorna um Result com uma lista de mensagens de erro
         var result2 = userService.RegisterUser2(user2);
+
+
+
+        // Exemplo de uso do Match para lidar com o resultado
+
+        var tt = result2.Match(
+            () =>
+            {
+                Console.WriteLine("User registered successfully.");
+                return 0;
+            },
+            errors =>
+            {
+                Console.WriteLine("Failed to register user:");
+                foreach (var error in errors)
+                {
+                    Console.WriteLine($"- {error}");
+                }
+                return -1;
+            }
+        );
+
+        result2.Match2<Usuario>(
+            (x) =>
+            {
+                Console.WriteLine("User registered successfully.");
+                //return 0;
+            },
+            (errors, x) =>
+            {
+                Console.WriteLine("Failed to register user:");
+                foreach (var error in errors)
+                {
+                    Console.WriteLine($"- {error}");
+                }
+            }
+        );
+
+        Console.WriteLine("");
+        //result.Match(
+        //    onSuccess: () => Results.NoContent(),
+        //    onFailure: error => Results.BadRequest(error));
 
 
 

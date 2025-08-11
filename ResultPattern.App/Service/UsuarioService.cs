@@ -39,7 +39,7 @@ namespace ResultPattern.Service
         /// Registra o usuário com validação e retorno de mensagens de erro.
         /// </summary>
         /// <returns></returns>
-        public Result RegisterUser2(Usuario user)
+        public Result<Usuario> RegisterUser2(Usuario user)
         {
             var validationResult = Result<Usuario>.Create(user);
 

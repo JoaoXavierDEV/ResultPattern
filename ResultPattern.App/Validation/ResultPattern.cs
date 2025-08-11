@@ -149,4 +149,31 @@ public class Result<T> : Result where T : notnull
     }
 }
 
+public static class ResultExtensions
+{
+    public static T Match<T>(
+        this Result result,
+        Func<T> onSuccess,
+        Func<List<string>, T> onFailure)
+    {
+        return result.IsSuccess ? onSuccess() : onFailure(result.Errors);
+    }
+
+    public static void Match2<T>(
+        this Result<T> result,
+        Action<T> onSuccess,
+        Action<List<string>, T> onFailure)
+    {
+        if (result.IsSuccess)
+        {
+            onSuccess(result.Value);
+        }
+        else
+        {
+            onFailure(result.Errors, result.Value);
+        }
+    }
+}
+
+
 
