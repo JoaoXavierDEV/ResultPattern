@@ -56,12 +56,12 @@ public static class Program
         );
 
         result2.Match2<Usuario>(
-            (x) =>
+            (usuario) =>
             {
                 Console.WriteLine("User registered successfully.");
                 //return 0;
             },
-            (errors, x) =>
+            (errors, usuario) =>
             {
                 Console.WriteLine("Failed to register user:");
                 foreach (var error in errors)

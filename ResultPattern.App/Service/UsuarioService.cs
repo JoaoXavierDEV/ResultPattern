@@ -65,10 +65,6 @@ namespace ResultPattern.Service
         public bool UserExists(string email)
         {
             return false;
-            // Simulate a check for existing user
-            int num = DateTime.Now.Millisecond;
-
-            return num % 2 == 0;
         }
 
         public void CreateUser(Usuario user)

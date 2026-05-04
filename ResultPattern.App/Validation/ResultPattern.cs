@@ -5,38 +5,24 @@ using ResultPattern.Validation;
 namespace ResultPattern;
 
 [DebuggerDisplay("IsSuccess = {IsSuccess}, Possui {Errors.Count} Erros = {ToString()}")]
-public class Result
+public record Result
 {
-    protected Result(bool isSucess)
-    {
-        IsSuccess = isSucess;
-    }
-
     protected Result() { }
 
-    protected Result(bool isSuccess, Error? error = null, string? language = null)
+    protected Result(Error? error = null, string? language = null)
     {
-        IsSuccess = isSuccess;
-
-        if (!isSuccess)
-        {
-            if (error is not null)
-                Errors.Add(error.GetMessage(language));
-        }
+        if (error is not null)
+            Errors.Add(error.GetMessage(language));
     }
 
-    protected Result(bool isSuccess, string? error = null, string? language = null)
+    protected Result(string? error = null, string? language = null)
     {
-        IsSuccess = isSuccess;
-
-        if (!isSuccess)
-        {
-            if (error is not null)
-                Errors.Add(error);
-        }
+        if (error is not null)
+            Errors.Add(error);
     }
 
-    public bool IsSuccess { get; protected set; }
+    public bool IsSuccess => !Errors.Any();
+
     public List<string> Errors { get; protected set; } = new List<string>();
 
     public override string ToString()
@@ -46,62 +32,59 @@ public class Result
 
     public bool IsFailure => !IsSuccess;
 
-    public static Result Ok() => new(true);
-    public static Result Fail(Error error) => new(false, error);
-    public static Result Fail(string error) => new(false, error);
+    public static Result Ok() => new();
+    public static Result Fail(Error error) => new(error);
+    public static Result Fail(string error) => new(error);
 
 
-    public static Result<T> Create<T>(T? value) =>
-        value is not null
-            ? Ok<T>(value)
-            : Fail<T>(Error.NullValue);
+    public static Result<T> Create<T>() => Ok<T>();
 
+    public static Result<T?> Create<T>(T? value) => Ok<T?>(value);
 
     public static Result<T> Ok<T>(T data)
-        => new(data, true);
+        => new(data);
 
-    public static Result Ok<T>()
-        => new(true);
+    public static Result<T> Ok<T>()
+        => new(Activator.CreateInstance<T>());
 
-    // TODO testar versoes <T> e default
     public static Result<T> Fail<T>(Error error)
-        => new(default, false, error);
-    //=> new(Activator.CreateInstance<T>(), false, error);
+        => new(default, error);
 
-    public static Result<T> Fail<T>(Error error, T data)
-        => new(data, false, error);
+    public static Result<T> Fail<T>(Error error, T? data)
+        => new(data, error);
 
-    public static Result<T> Fail<T>(string error, T data)
-        => new(data, false, error);
+    public static Result<T> Fail<T>(string error, T? data)
+        => new(data, error);
+
+    public static Result<T> Fail<T>(string error)
+        => new(default, error);
+
+    public static implicit operator Result(Error error) => Fail(error);
 
 }
 
-public class Result<T> : Result where T : notnull
+public record Result<T> : Result //where T : notnull
 {
-    public static implicit operator Result<T>(T? value) => Create(value);
+    public static implicit operator Result<T?>(T? value) => Create<T>(value);
 
     private readonly T? _value;
 
     [NotNull]
     public T Value => _value! ?? throw new InvalidOperationException("Result has no value");
 
-    protected internal Result(T? value, bool isSuccess) : base(isSuccess)
+    protected internal Result(T? value) : base()
     {
         _value = value;
     }
 
-    protected internal Result(T? value, bool isSuccess, Error? error = null) : base(isSuccess, error)
+    protected internal Result(T? value, Error? error = null) : base(error)
     {
         _value = value;
     }
 
-    protected internal Result(T? value, bool isSuccess, string? error = null) : base(isSuccess, error)
+    protected internal Result(T? value, string? error = null) : base(error)
     {
         _value = value;
-    }
-
-    private Result()
-    {
     }
 
     public static Result<T> Validate(Func<T, bool> func, Error message, T data)
@@ -126,22 +109,19 @@ public class Result<T> : Result where T : notnull
 
 
 
-    public Result AddMessageError(Error error, string? language = null)
+    public Result<T> AddMessageError(Error error, string? language = null)
     {
         var msg = error.GetMessage(language);
         return AddMessageErrorInternal(msg);
     }
 
-    public Result AddMessageError(string message)
+    public Result<T> AddMessageError(string message)
     {
         return AddMessageErrorInternal(message);
     }
 
-    private Result AddMessageErrorInternal(string message)
+    private Result<T> AddMessageErrorInternal(string message)
     {
-        if (IsSuccess)
-            IsSuccess = false;
-
         if (!Errors.Contains(message))
             Errors.Add(message);
 
@@ -160,7 +140,7 @@ public static class ResultExtensions
     }
 
     public static void Match2<T>(
-        this Result<T> result,
+        [NotNull] this Result<T> result,
         Action<T> onSuccess,
         Action<List<string>, T> onFailure)
     {

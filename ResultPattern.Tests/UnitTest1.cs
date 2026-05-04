@@ -4,20 +4,19 @@ namespace ResultPattern.Tests
 {
     public class UnitTest1
     {
-        [Fact]
+        [Fact(DisplayName = "Test OK Result")]
         public void TestOK()
         {
             var resultOK = Result.Ok<Usuario>();
 
             Assert.IsType<Result<Usuario>>(resultOK);
 
-            Assert.Throws<InvalidOperationException>(() => resultOK.Value);
-
             Assert.True(resultOK.IsSuccess);
+
             Assert.Empty(resultOK.Errors);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Test OK Result with Value")]
         public void TestOk2()
         {
             var resultOK = Result.Ok(new Usuario());
@@ -30,7 +29,7 @@ namespace ResultPattern.Tests
             Assert.Empty(resultOK.Errors);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Test Create Result")]
         public void Test2()
         {
             var resultOK = Result.Create<Usuario>(new Usuario());
@@ -41,7 +40,7 @@ namespace ResultPattern.Tests
             Assert.Empty(resultOK.Errors);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Test Create Result with Value")]
         public void Test3()
         {
             var user = new Usuario();
@@ -57,18 +56,17 @@ namespace ResultPattern.Tests
             Assert.Empty(resultOK.Errors);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Test Fail Result")]
         public void TestFail()
         {
-            var user = new Usuario();
+            var resultOK = Result.Create<Usuario>();
 
-            var resultOK = Result.Create<Usuario>(null);
-
-            Assert.Throws<InvalidOperationException>(() => resultOK.Value);
+            resultOK.AddMessageError("Um valor nulo foi fornecido.");
 
             Assert.IsType<Result<Usuario>>(resultOK);
 
             Assert.True(resultOK.IsFailure);
+
             Assert.False(resultOK.IsSuccess);
 
             Assert.NotEmpty(resultOK.Errors);
@@ -76,8 +74,40 @@ namespace ResultPattern.Tests
             Assert.Contains("Um valor nulo foi fornecido.", resultOK.Errors);
         }
 
+        [Fact(DisplayName = "Test Fail Result with Value")]
+        public void TestFailWithValue()
+        {
+            var user = new Usuario();
+
+            var resultOK = Result.Create(user);
+            resultOK.AddMessageError("Um valor nulo foi fornecido.");
+
+            var resultOKtyped = Result.Create<Usuario>(user);
+            resultOKtyped.AddMessageError("Um valor nulo foi fornecido.");
+
+            Assert.Equivalent(resultOKtyped, resultOK);
 
 
+            Assert.IsType<Result<Usuario>>(resultOK);
 
+            Assert.True(resultOK.IsFailure);
+
+            Assert.False(resultOK.IsSuccess);
+
+            Assert.NotEmpty(resultOK.Errors);
+
+            Assert.Contains("Um valor nulo foi fornecido.", resultOK.Errors);
+        }
+
+        [Fact(DisplayName = "Test Create Result with Value")]
+        public void Test4()
+        {
+            new Result<Usuario>();
+            var resultOK = Result.Create<Usuario>(new Usuario());
+            Assert.IsType<Result<Usuario>>(resultOK);
+            Assert.True(resultOK.IsSuccess);
+            Assert.Empty(resultOK.Errors);
+
+        }
     }
 }
