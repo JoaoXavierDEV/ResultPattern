@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using ResultPattern.Validation;
 
-namespace ResultPattern;
+namespace ResultPattern.Validation;
 
 [DebuggerDisplay("IsSuccess = {IsSuccess}, Possui {Errors.Count} Erros = {ToString()}")]
 public record Result

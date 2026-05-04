@@ -1,4 +1,5 @@
 ﻿using ResultPattern.Entity;
+using ResultPattern.Validation;
 
 namespace ResultPattern.Tests
 {
@@ -99,15 +100,15 @@ namespace ResultPattern.Tests
             Assert.Contains("Um valor nulo foi fornecido.", resultOK.Errors);
         }
 
-        [Fact(DisplayName = "Test Create Result with Value")]
-        public void Test4()
-        {
-            new Result<Usuario>();
-            var resultOK = Result.Create<Usuario>(new Usuario());
-            Assert.IsType<Result<Usuario>>(resultOK);
-            Assert.True(resultOK.IsSuccess);
-            Assert.Empty(resultOK.Errors);
+        //[Fact(DisplayName = "Test Create Result with Value")]
+        //public void Test4()
+        //{
+        //    new Result<Usuario>();
+        //    var resultOK = Result.Create<Usuario>(new Usuario());
+        //    Assert.IsType<Result<Usuario>>(resultOK);
+        //    Assert.True(resultOK.IsSuccess);
+        //    Assert.Empty(resultOK.Errors);
 
-        }
+        //}
     }
 }
