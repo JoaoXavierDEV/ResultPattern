@@ -23,11 +23,11 @@ namespace ResultPattern.Entity
             Preco = novoPreco;
         }
 
-        public Result Validar()
+        public Result<Produto> Validar()
         {
             if (Preco <= 0)
-                return Result.Fail(ProdutoValidate.PrecoNegativo);
-            return Result.Ok();
+                return Result.Fail<Produto>(x => x.Preco, ProdutoValidate.PrecoNegativo, this);
+            return Result.Ok<Produto>(this);
         }
 
         public override string ToString()

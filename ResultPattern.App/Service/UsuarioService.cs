@@ -13,18 +13,19 @@ namespace ResultPattern.Service
         {
             // validação usando o record Error
             if (string.IsNullOrWhiteSpace(user.Email))
-                return Result.Fail(UsuarioValidade.InvalidEmail);
+                return Result.Fail<Usuario>(x => x.Email, UsuarioValidade.InvalidEmail, user);
 
             if (string.IsNullOrWhiteSpace(user.Senha))
-                return Result.Fail<Usuario>(UsuarioValidade.InvalidPassword);
+                return Result.Fail<Usuario>(x => x.Senha, UsuarioValidade.InvalidPassword, user);
 
             if (UserExists(user.Email))
-                return Result.Fail(UsuarioValidade.DuplicateEmail);
+                return Result.Fail<Usuario>(x => x.Email, UsuarioValidade.DuplicateEmail, user);
 
             // validação personalizada
             var testeSenha = Result<Usuario>.Validate(
-                user => user.Senha.Length < 10,
-                "Senha menor que 10 caracteres",
+                u => u.Senha.Length < 10,
+                x => x.Senha,
+                UsuarioValidade.InvalidPassword,
                 user
             );
 
@@ -33,7 +34,7 @@ namespace ResultPattern.Service
 
             CreateUser(user);
 
-            return Result<Usuario>.Ok();
+            return Result.Ok(user);
         }
         /// <summary>
         /// Registra o usuário com validação e retorno de mensagens de erro.
@@ -41,19 +42,17 @@ namespace ResultPattern.Service
         /// <returns></returns>
         public Result<Usuario> RegisterUser2(Usuario user)
         {
-            var validationResult = Result<Usuario>.Create(user);
+            var validationResult = Result.Ok(user);
 
             if (string.IsNullOrWhiteSpace(user.Email))
-                validationResult.AddMessageError(UsuarioValidade.InvalidEmail);
+                validationResult.AddMessageError(x => x.Email, UsuarioValidade.InvalidEmail);
 
             if (string.IsNullOrWhiteSpace(user.Senha))
-                validationResult.AddMessageError(UsuarioValidade.InvalidPassword);
+                validationResult.AddMessageError(x => x.Senha, UsuarioValidade.InvalidPassword);
 
-            // Check for duplicate email (simplified example)
             if (UserExists(user.Email))
-                validationResult.AddMessageError(UsuarioValidade.DuplicateEmail);
+                validationResult.AddMessageError(x => x.Email, UsuarioValidade.DuplicateEmail);
 
-            // Registration logic here
             if (validationResult.IsSuccess)
             {
                 CreateUser(user);
@@ -64,17 +63,16 @@ namespace ResultPattern.Service
 
         public Result<Usuario> RegisterUser3(Usuario user)
         {
-            var validationResult = Result<Usuario>.Create(user);
+            var validationResult = Result.Ok(user);
 
             if (string.IsNullOrWhiteSpace(user.Email))
-                validationResult.AddMessageError(nameof(user.Email), UsuarioValidade.InvalidEmail);
+                validationResult.AddMessageError(x => x.Email, UsuarioValidade.InvalidEmail);
 
             if (string.IsNullOrWhiteSpace(user.Senha))
-                validationResult.AddMessageError(nameof(user.Senha), UsuarioValidade.InvalidPassword);
+                validationResult.AddMessageError(x => x.Senha, UsuarioValidade.InvalidPassword);
 
-            // Check for duplicate email (simplified example)
             if (UserExists(user.Email))
-                validationResult.AddMessageError(nameof(user.Email), UsuarioValidade.DuplicateEmail);
+                validationResult.AddMessageError(x => x.Email, UsuarioValidade.DuplicateEmail);
 
             // Registration logic here
             if (validationResult.IsSuccess)
