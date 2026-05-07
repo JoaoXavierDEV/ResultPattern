@@ -4,10 +4,10 @@ public class DomainExceptionValidation : Exception
 {
     public IDictionary<string, string[]> Dictionary { get; private set; } = new Dictionary<string, string[]>();
 
-    public DomainExceptionValidation(string error, string field) : base(error)
-    {
-        Dictionary.Add(field, [error]);
-    }
+    //public DomainExceptionValidation(string error, string field) : base(error)
+    //{
+    //    Dictionary.Add(field, [error]);
+    //}
 
     public DomainExceptionValidation(IDictionary<string, string[]> dictionary) : base()
     {

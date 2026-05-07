@@ -14,7 +14,7 @@ namespace ResultPattern.Tests
 
             Assert.True(resultOK.IsSuccess);
 
-            Assert.Empty(resultOK.Errors);
+            Assert.Empty(resultOK.ValidationErrors);
         }
 
         [Fact(DisplayName = "Test OK Result with Value")]
@@ -27,7 +27,7 @@ namespace ResultPattern.Tests
             Assert.IsType<Usuario>(resultOK.Value);
 
             Assert.True(resultOK.IsSuccess);
-            Assert.Empty(resultOK.Errors);
+            Assert.Empty(resultOK.ValidationErrors);
         }
 
         [Fact(DisplayName = "Test Create Result")]
@@ -38,7 +38,7 @@ namespace ResultPattern.Tests
             Assert.IsType<Result<Usuario>>(resultOK);
 
             Assert.True(resultOK.IsSuccess);
-            Assert.Empty(resultOK.Errors);
+            Assert.Empty(resultOK.ValidationErrors);
         }
 
         [Fact(DisplayName = "Test Create Result with Value")]
@@ -54,7 +54,7 @@ namespace ResultPattern.Tests
             Assert.IsType<Result<Usuario>>(resultOK);
 
             Assert.True(resultOK.IsSuccess);
-            Assert.Empty(resultOK.Errors);
+            Assert.Empty(resultOK.ValidationErrors);
         }
 
         [Fact(DisplayName = "Test Fail Result")]
@@ -70,9 +70,9 @@ namespace ResultPattern.Tests
 
             Assert.False(resultOK.IsSuccess);
 
-            Assert.NotEmpty(resultOK.Errors);
+            Assert.NotEmpty(resultOK.ValidationErrors);
 
-            Assert.Contains("Um valor nulo foi fornecido.", resultOK.Errors);
+            Assert.Contains(resultOK.ValidationErrors, kv => kv.Value.Contains("Um valor nulo foi fornecido."));
         }
 
         [Fact(DisplayName = "Test Fail Result with Value")]
@@ -95,20 +95,41 @@ namespace ResultPattern.Tests
 
             Assert.False(resultOK.IsSuccess);
 
-            Assert.NotEmpty(resultOK.Errors);
+            Assert.NotEmpty(resultOK.ValidationErrors);
 
-            Assert.Contains("Um valor nulo foi fornecido.", resultOK.Errors);
+            Assert.Contains(resultOK.ValidationErrors, kv => kv.Value.Contains("Um valor nulo foi fornecido."));
         }
 
-        //[Fact(DisplayName = "Test Create Result with Value")]
-        //public void Test4()
-        //{
-        //    new Result<Usuario>();
-        //    var resultOK = Result.Create<Usuario>(new Usuario());
-        //    Assert.IsType<Result<Usuario>>(resultOK);
-        //    Assert.True(resultOK.IsSuccess);
-        //    Assert.Empty(resultOK.Errors);
+        [Fact(DisplayName = "Test Create Result with Value 2")]
+        public void Test4()
+        {
+            var usuario = new Usuario
+            {
+                Nome = string.Empty, // Garante que não será nulo
+                Email = "joao@outlook.com",
+                Senha = string.Empty
+            };          
+            var result = Result.Create<Usuario>(usuario);
 
-        //}
+            result.AddMessageError(nameof(Usuario.Email), "Um valor nulo foi fornecido.");
+
+            result.AddMessageError(x => x.Email, "Um valor nulo foi fornecido.");
+
+            result.AddMessageError(x => x.Senha, "Senha deve ter no mínimo 6 caracteres");
+
+            result.AddMessageError(x => x.Nome, "Nome deve ter no mínimo 3 caracteres");
+
+            result.AddMessageError(x => x.Nome, "Nome não pode ser nulo");
+
+            Assert.Equal(usuario.Email, result.Value.Email);
+
+            Assert.Equal(5, result.ErrorCount);
+
+            Assert.IsType<Result<Usuario>>(result);
+
+            Assert.True(result.IsFailure);
+            Assert.False(result.IsSuccess);
+            Assert.NotEmpty(result.ValidationErrors);
+        }
     }
 }

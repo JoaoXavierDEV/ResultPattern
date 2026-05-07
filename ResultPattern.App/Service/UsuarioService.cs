@@ -62,6 +62,29 @@ namespace ResultPattern.Service
             return validationResult;
         }
 
+        public Result<Usuario> RegisterUser3(Usuario user)
+        {
+            var validationResult = Result<Usuario>.Create(user);
+
+            if (string.IsNullOrWhiteSpace(user.Email))
+                validationResult.AddMessageError(nameof(user.Email), UsuarioValidade.InvalidEmail);
+
+            if (string.IsNullOrWhiteSpace(user.Senha))
+                validationResult.AddMessageError(nameof(user.Senha), UsuarioValidade.InvalidPassword);
+
+            // Check for duplicate email (simplified example)
+            if (UserExists(user.Email))
+                validationResult.AddMessageError(nameof(user.Email), UsuarioValidade.DuplicateEmail);
+
+            // Registration logic here
+            if (validationResult.IsSuccess)
+            {
+                CreateUser(user);
+            }
+
+            return validationResult;
+        }
+
         public bool UserExists(string email)
         {
             return false;
