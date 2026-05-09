@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using ResultPattern.Entity;
 using ResultPattern.Service;
-using ResultPattern.Validation;
 
 public class Program
 {
@@ -36,52 +35,10 @@ public class Program
 
 
 
-        // Exemplo de uso do Match para lidar com o resultado
 
-        var tt = result2.Match(
-            () =>
-            {
-                Console.WriteLine("User registered successfully.");
-                return 0;
-            },
-            errors =>
-            {
-                Console.WriteLine("Failed to register user:");
-                foreach (var error in errors)
-                {
-                    Console.WriteLine($"- {error}");
-                }
-                return -1;
-            }
-        );
-
-        result2.Match<Usuario>(
-            onSuccess: (usuario) =>
-            {
-                Console.WriteLine("User registered successfully.");
-                //return 0;
-            },
-            onFailure: (errors, usuario) =>
-            {
-                Console.WriteLine("Failed to register user:");
-                foreach (var error in errors)
-                {
-                    Console.WriteLine($"- {error}");
-                }
-            }
-        );
 
         Console.WriteLine("");
     }
 
-    //    return result.Match(
-    //        onSuccess: () => Ok(result.Value),
-    //        onFailure: (errors, validationErrors) =>
-    //        {
-    //            if (validationErrors.Any())
-    //                return BadRequest(result.ToValidationProblemDetails(HttpContext));
 
-    //            return new { result.ToProblemDetails(HttpContext) };
-    //        });
-    //}
 }

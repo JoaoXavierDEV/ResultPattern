@@ -42,16 +42,24 @@ namespace ResultPattern.Service
         /// <returns></returns>
         public Result<Usuario> RegisterUser2(Usuario user)
         {
-            var validationResult = Result.Ok(user);
+            var validationResult = Result.Create(user);
 
             if (string.IsNullOrWhiteSpace(user.Email))
                 validationResult.AddMessageError(x => x.Email, UsuarioValidade.InvalidEmail);
 
+            if (UserExists(user.Email))
+                validationResult.AddMessageError(x => x.Email, UsuarioValidade.DuplicateEmail);
+
             if (string.IsNullOrWhiteSpace(user.Senha))
                 validationResult.AddMessageError(x => x.Senha, UsuarioValidade.InvalidPassword);
 
-            if (UserExists(user.Email))
-                validationResult.AddMessageError(x => x.Email, UsuarioValidade.DuplicateEmail);
+            var testeSenha = Result<Usuario>.Validate(
+                u => u.Senha.Length < 8,
+                x => x.Senha,
+                UsuarioValidade.InvalidPassword,
+                user
+            );
+
 
             if (validationResult.IsSuccess)
             {

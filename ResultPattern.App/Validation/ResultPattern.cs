@@ -118,25 +118,4 @@ public record Result<T> : Result where T : notnull
     }
 }
 
-public static class ResultExtensions
-{
-    public static T Match<T>(
-        this Result result,
-        Func<T> onSuccess,
-        Func<Dictionary<string, string[]>, T> onFailure)
-    {
-        return result.IsSuccess ? onSuccess() : onFailure(result.ValidationErrors);
-    }
-
-    public static void Match<T>(
-        [NotNull] this Result<T> result,
-        Action<T> onSuccess,
-        Action<Dictionary<string, string[]>, T> onFailure) where T : notnull
-    {
-        if (result.IsSuccess)
-            onSuccess(result.Value);
-        else
-            onFailure(result.ValidationErrors, result.Value);
-    }
-}
 

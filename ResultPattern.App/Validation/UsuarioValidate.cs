@@ -20,7 +20,7 @@
             { "en-us", "An account with this email already exists." }
         });
 
-        public UsuarioValidade(string code, Dictionary<string, string> messages) : base(code, messages)
+        private UsuarioValidade(string code, Dictionary<string, string> messages) : base(code, messages)
         {
         }
     }
