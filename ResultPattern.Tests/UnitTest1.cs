@@ -176,6 +176,9 @@ namespace ResultPattern.Tests
             var usuario = new Usuario();
             var result = Result.Ok(usuario);
 
+            var zones = TimeZoneInfo.GetSystemTimeZones();
+            var zone = zones[0];
+
             result.AddMessageError(x => x.Endereco.Cep, "CEP do usuário não pode ser nulo");
             result.AddMessageError(x => x.Endereco.Cidade, "Cidade é obrigatória");
             result.AddMessageError(x => x.Nome, "Nome é obrigatório");

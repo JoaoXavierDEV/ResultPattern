@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using ResultPattern.Entity;
 using ResultPattern.Service;
+using ResultPattern.Validation;
 
 public class Program
 {
@@ -16,6 +18,8 @@ public class Program
             Email = "",
             Senha = ""
         };
+
+
 
         // Retorna um resultado com sucesso ou falha
         var result = userService.RegisterUser3(user);
